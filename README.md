@@ -39,7 +39,7 @@ npm start</code></pre>
 
 </div>
 
-frontend link :=
+frontend link := assignment-phi-ashy.vercel.app <br>
 backend link := https://backendapp-n2d5.onrender.com
 
 ![Screenshot 2024-07-03 150117](https://github.com/manshikumari12/assignment-/assets/119393324/856af327-ac90-4c17-9db2-2d003f03161c)
