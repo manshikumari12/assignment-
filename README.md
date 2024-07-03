@@ -37,7 +37,9 @@ npm start</code></pre>
 
 </div>
 
-![Screenshot 2024-07-03 142329](https://github.com/manshikumari12/assignment-/assets/119393324/87ecbc36-775a-4780-b9cf-3c884e2c97d6)
 
+
+![Screenshot 2024-07-03 150117](https://github.com/manshikumari12/assignment-/assets/119393324/856af327-ac90-4c17-9db2-2d003f03161c)
 
     
+![Screenshot 2024-07-03 150438](https://github.com/manshikumari12/assignment-/assets/119393324/6f22a627-cd71-472f-9fe5-298278ac8396)
