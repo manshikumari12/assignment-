@@ -1,6 +1,8 @@
-<div class="container">
+<div >
         <h1>Network Data Fetcher</h1>
         <p>This project consists of a frontend application built with React and a backend server built with Express.js. The application allows users to enter a URL and fetch network data from the specified URL. The fetched data is displayed in a table format, and users can filter and view detailed information about each request.</p>
+
+      
 
       
 
@@ -37,7 +39,8 @@ npm start</code></pre>
 
 </div>
 
-
+frontend link :=
+backend link := https://backendapp-n2d5.onrender.com
 
 ![Screenshot 2024-07-03 150117](https://github.com/manshikumari12/assignment-/assets/119393324/856af327-ac90-4c17-9db2-2d003f03161c)
 
