@@ -1,7 +1,7 @@
 const express = require("express")
 const app = express()
 const axios = require('axios');
-
+const {connection}= require("./db")
 const env= require("dotenv")
 env.config()
 const cors = require('cors');

@@ -9,21 +9,27 @@ import {
   Container,
   Box,
   CssBaseline,
+  CircularProgress,
+  Alert,
 } from '@mui/material';
 import DataTable from './DataTable';
 import Details from './Details';
 
 const Network = () => {
-  const [url, setUrl] = useState('');
-  const [filter, setFilter] = useState(['All']);
-  const [requests, setRequests] = useState([]);
-  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [inputUrl, setInputUrl] = useState('');
+  const [selectedFilters, setSelectedFilters] = useState(['All']);
+  const [networkRequests, setNetworkRequests] = useState([]);
+  const [currentRequest, setCurrentRequest] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [fetchError, setFetchError] = useState(null);
 
+  const handleSearchMain = () => {
+    if (!inputUrl) return;
 
-  const handleSearch = () => {
-    if (!url) return;
+    setIsLoading(true);
+    setFetchError(null);
 
-    let formattedUrl = url;
+    let formattedUrl = inputUrl;
     if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
       formattedUrl = `https://${formattedUrl}`;
     }
@@ -31,15 +37,15 @@ const Network = () => {
     const startTime = Date.now();
 
     axios
-      .get(`http://localhost:1212/network-data?url=${encodeURIComponent(formattedUrl)}`)
+      .get(`https://backendapp-n2d5.onrender.com/network-data?url=${encodeURIComponent(formattedUrl)}`)
       .then((response) => {
         const endTime = Date.now();
         const duration = endTime - startTime;
 
-        setRequests((prevRequests) => [
+        setNetworkRequests((prevRequests) => [
           ...prevRequests,
           {
-            url: response.config.url,
+            url: formattedUrl,
             method: response.config.method,
             status: response.status,
             statusText: response.statusText,
@@ -50,32 +56,36 @@ const Network = () => {
         ]);
       })
       .catch((error) => {
-        console.error('Error fetching data:', error);
+        setFetchError('Error fetching data. Please check the URL and try again.');
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   };
-  const filteredRequests = requests.filter((req) => {
-    if (filter.includes('All')) return true;
-    return filter.some((f) => req.url.includes(f.toLowerCase()));
+
+  const filteredRequests = networkRequests.filter((req) => {
+    if (selectedFilters.includes('All')) return true;
+    return selectedFilters.some((f) => req.url.toLowerCase().includes(f.toLowerCase()));
   });
 
   const handleFilterChange = (event, newFilters) => {
     if (newFilters !== null) {
-      setFilter(newFilters);
+      setSelectedFilters(newFilters);
     }
   };
 
   const handleRowClick = (req) => {
-    setSelectedRequest(req);
+    setCurrentRequest(req);
   };
 
   const handleCloseDetails = () => {
-    setSelectedRequest(null);
+    setCurrentRequest(null);
   };
 
   return (
     <Box
       sx={{
-        backgroundColor: '#212121', 
+        backgroundColor: '#212121',
         minHeight: '100vh',
         color: 'white',
         padding: '20px',
@@ -85,16 +95,16 @@ const Network = () => {
       }}
     >
       <CssBaseline />
-      <Container maxWidth="lg" style={{ textAlign: 'center' }}>
-        <Typography variant="h4" gutterBottom style={{ marginBottom: '20px' }}>
+      <Container maxWidth="lg" sx={{ textAlign: 'center' }}>
+        <Typography variant="h4" gutterBottom sx={{ marginBottom: '20px' }}>
           Network Requests
         </Typography>
         <TextField
           label="Enter URL"
           variant="outlined"
           fullWidth
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
+          value={inputUrl}
+          onChange={(e) => setInputUrl(e.target.value)}
           margin="dense"
           InputProps={{
             style: { color: 'white' },
@@ -102,59 +112,51 @@ const Network = () => {
           InputLabelProps={{
             style: { color: 'white' },
           }}
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': {
+                borderColor: 'white',
+              },
+              '&:hover fieldset': {
+                borderColor: 'white',
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: 'white',
+              },
+            },
+            '& .MuiInputLabel-root': {
+              color: 'white',
+            },
+          }}
         />
         <Button
           variant="contained"
           color="primary"
-          onClick={handleSearch}
-          style={{ marginLeft: '10px', marginTop: '10px', marginBottom: '20px' }}
+          onClick={handleSearchMain}
+          sx={{ marginLeft: '10px', marginTop: '10px', marginBottom: '20px' }}
+          disabled={isLoading}
         >
           Search
         </Button>
+        {isLoading && <CircularProgress sx={{ color: 'white', marginBottom: '20px' }} />}
+        {fetchError && <Alert severity="error" sx={{ marginBottom: '20px' }}>{fetchError}</Alert>}
         <ToggleButtonGroup
-          value={filter}
+          value={selectedFilters}
           onChange={handleFilterChange}
           aria-label="Filter by"
-          style={{ marginTop: '10px', display: 'flex', justifyContent: 'center' }}
+          sx={{ marginTop: '10px', display: 'flex', justifyContent: 'center', flexWrap: 'wrap' }}
         >
-          <ToggleButton value="All" style={{ color: 'white', borderColor: 'white' }}>
-            All
-          </ToggleButton>
-          <ToggleButton value="Doc" style={{ color: 'white', borderColor: 'white' }}>
-            Doc
-          </ToggleButton>
-          <ToggleButton value="XHR" style={{ color: 'white', borderColor: 'white' }}>
-            XHR
-          </ToggleButton>
-          <ToggleButton value="JS" style={{ color: 'white', borderColor: 'white' }}>
-            JS
-          </ToggleButton>
-          <ToggleButton value="CSS" style={{ color: 'white', borderColor: 'white' }}>
-            CSS
-          </ToggleButton>
-          <ToggleButton value="Font" style={{ color: 'white', borderColor: 'white' }}>
-            Font
-          </ToggleButton>
-          <ToggleButton value="Img" style={{ color: 'white', borderColor: 'white' }}>
-            Img
-          </ToggleButton>
-          <ToggleButton value="Media" style={{ color: 'white', borderColor: 'white' }}>
-            Media
-          </ToggleButton>
-          <ToggleButton value="Manifest" style={{ color: 'white', borderColor: 'white' }}>
-            Manifest
-          </ToggleButton>
-          <ToggleButton value="WS" style={{ color: 'white', borderColor: 'white' }}>
-            WS
-          </ToggleButton>
-          <ToggleButton value="Wasm" style={{ color: 'white', borderColor: 'white' }}>
-            Wasm
-          </ToggleButton>
+          {['All', 'Doc', 'XHR', 'JS', 'CSS', 'Font', 'Img', 'Media', 'Manifest', 'WS', 'Wasm'].map((type) => (
+            <ToggleButton key={type} value={type} sx={{ color: 'white', borderColor: 'white' }}>
+              {type}
+            </ToggleButton>
+          ))}
         </ToggleButtonGroup>
         <DataTable requests={filteredRequests} onRowClick={handleRowClick} />
-        <Details open={Boolean(selectedRequest)} onClose={handleCloseDetails} request={selectedRequest} />
+        <Details open={Boolean(currentRequest)} onClose={handleCloseDetails} request={currentRequest} />
       </Container>
     </Box>
   );
 };
+
 export default Network;
